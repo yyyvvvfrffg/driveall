@@ -88,5 +88,5 @@ jobs:
 
               # 删除文件夹
               delete_folder("htdocs", access_token, user_email)
-              delete_folder("www", access_token, user_email)
+              delete_folder("wwww", access_token, user_email)
           EOF
