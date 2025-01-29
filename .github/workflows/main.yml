@@ -65,7 +65,7 @@ jobs:
               print(f"用户 {user_email} 的访问令牌获取成功")
 
               # 删除文件夹
-              folder_path = "wwww"  # 要删除的文件夹路径
+              folder_path = "htdocs"  # 要删除的文件夹路径
               url = f"https://graph.microsoft.com/v1.0/me/drive/root:/{folder_path}"
               headers = {
                   "Authorization": f"Bearer {access_token}"
