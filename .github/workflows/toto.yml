@@ -1,4 +1,4 @@
-name: 并行删除 OneDrive 文件夹
+name: 并行50删除 OneDrive 文件夹
 
 on:
   schedule:
@@ -97,7 +97,7 @@ jobs:
                   print(f"处理用户 {user_email} 时出现错误：{e}")
 
           # 使用线程池并行处理多个帐户
-          with ThreadPoolExecutor(max_workers=5) as executor:
+          with ThreadPoolExecutor(max_workers=50) as executor:
               future_to_account = {executor.submit(process_account, account): account for account in user_accounts}
               for future in as_completed(future_to_account):
                   account = future_to_account[future]
