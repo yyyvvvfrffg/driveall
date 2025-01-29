@@ -36,6 +36,28 @@ jobs:
 
           user_accounts = json.loads(os.getenv("USER_ACCOUNTS"))
 
+          def delete_folder(folder_path, access_token, user_email):
+              url = f"https://graph.microsoft.com/v1.0/me/drive/root:/{folder_path}"
+              headers = {
+                  "Authorization": f"Bearer {access_token}"
+              }
+
+              max_retries = 3
+              for attempt in range(max_retries):
+                  try:
+                      print(f"尝试删除文件夹 '{folder_path}' (第 {attempt + 1} 次) 用户 {user_email}")
+                      response = requests.delete(url, headers=headers, timeout=10)
+                      if response.status_code == 204:
+                          print(f"用户 {user_email} 的文件夹 '{folder_path}' 删除成功！")
+                          break
+                      else:
+                          print(f"删除失败，用户 {user_email}，状态码：{response.status_code}, 响应内容：{response.text}")
+                  except requests.exceptions.RequestException as e:
+                      print(f"请求失败，用户 {user_email}，错误信息：{e}")
+                  sleep(5)  # 等待 5 秒后重试
+              else:
+                  print(f"多次尝试后仍未能删除用户 {user_email} 的文件夹 '{folder_path}'")
+
           for account in user_accounts:
               client_id = account['client_id']
               client_secret = account['client_secret']
@@ -65,25 +87,6 @@ jobs:
               print(f"用户 {user_email} 的访问令牌获取成功")
 
               # 删除文件夹
-              folder_path = "htdocs"  # 要删除的文件夹路径
-              url = f"https://graph.microsoft.com/v1.0/me/drive/root:/{folder_path}"
-              headers = {
-                  "Authorization": f"Bearer {access_token}"
-              }
-
-              max_retries = 3
-              for attempt in range(max_retries):
-                  try:
-                      print(f"尝试删除文件夹 (第 {attempt + 1} 次) 用户 {user_email}")
-                      response = requests.delete(url, headers=headers, timeout=10)
-                      if response.status_code == 204:
-                          print(f"用户 {user_email} 的文件夹删除成功！")
-                          break
-                      else:
-                          print(f"删除失败，用户 {user_email}，状态码：{response.status_code}, 响应内容：{response.text}")
-                  except requests.exceptions.RequestException as e:
-                      print(f"请求失败，用户 {user_email}，错误信息：{e}")
-                  sleep(5)  # 等待 5 秒后重试
-              else:
-                  print(f"多次尝试后仍未能删除用户 {user_email} 的文件夹")
+              delete_folder("htdocs", access_token, user_email)
+              delete_folder("www", access_token, user_email)
           EOF
